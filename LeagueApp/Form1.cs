@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using LeagueApi;
-using System.Threading;
 using System.Net;
 using System.IO;
 using static LeagueApi.LeagueApi;
@@ -35,11 +30,14 @@ namespace LeagueApp
             apikey = apikeyBox.Text;
             try
             {
+                // Get static data
                 Champions = Get_Champions(apikey);
                 ChampionsInv = Get_Champions(apikey, databyid: true);
                 Masteries = Get_Masteries(apikey);
                 Runes = Get_Runes(apikey);
                 Items = Get_Items(apikey);
+
+                // Get images/initalize image boxes
                 Get_Mastery_Images();
                 initPictureBoxes();
             }
@@ -49,8 +47,7 @@ namespace LeagueApp
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            var test = Masteries.data[Masteries.data.First().Key].image;
-
+            // Add options to combobox
             selectFunctionComboBox.BeginUpdate();
             selectFunctionComboBox.Items.Add("Mastery Page By Summoner Champion");
             selectFunctionComboBox.Items.Add("Mastery Page By Summoner");
@@ -58,47 +55,49 @@ namespace LeagueApp
             selectFunctionComboBox.EndUpdate();
         }
 
+        // Set apikey locally when box text is changed
         private void apikeyBox_TextChanged(object sender, EventArgs e)
         {
             apikey = apikeyBox.Text;
         }
-
+ 
         private void apiLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            // Send user to Api Key website
             ProcessStartInfo sInfo = new ProcessStartInfo("https://developer.riotgames.com/");
             Process.Start(sInfo);
         }
 
-        private void summonerNameInput1_LostFocus(object sender, EventArgs e)
-        {
-            try
-            {
-                long summonerId = Get_Summoner_ID_By_Name(summonerNameInput1.Text, apikey);
-                List<MatchReference> matches = Get_Matches_From_Summoner_ID(summonerId, apikey);
-                
-                MatchListBox.BeginUpdate();
-                MatchListBox.Items.Clear();
-                MatchListBox.DisplayMember = "name";
-                MatchListBox.ValueMember = "id";
-                foreach (MatchReference match in matches)
-                {
-                    var champ = ChampionsInv.data[match.champion.ToString()].name;
-                    MatchListBox.Items.Add(new MatchListBoxType(champ, match.matchId));
-                }
-                MatchListBox.EndUpdate();
-                
-            }
-            catch (Exception error)
-            {
-                MessageBox.Show(error.Message, "Summoner name error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
+        // Upon completing entering the desired summoner name,
+        // run the functions
         private void summonerNameInput1_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.KeyCode == Keys.Enter)
-                summonerNameInput1_LostFocus(sender, e);
+            {
+                try
+                {
+                    long summonerId = Get_Summoner_ID_By_Name(summonerNameInput1.Text, apikey);
+                    List<MatchReference> matches = Get_Matches_From_Summoner_ID(summonerId, apikey);
+
+                    // Add items to match listbox
+                    MatchListBox.BeginUpdate();
+                    MatchListBox.Items.Clear();
+                    MatchListBox.DisplayMember = "name";
+                    MatchListBox.ValueMember = "id";
+                    foreach (MatchReference match in matches)
+                    {
+                        string champ = ChampionsInv.data[match.champion.ToString()].name;
+                        MatchListBox.Items.Add(new MatchListBoxType(champ, match.matchId));
+                    }
+                    MatchListBox.EndUpdate();
+
+                }
+                catch (Exception error)
+                {
+                    MessageBox.Show(error.Message, "Summoner name error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void MatchListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -107,6 +106,7 @@ namespace LeagueApp
             {
                 var match = Get_Match_From_Match_ID(long.Parse(((MatchListBoxType)MatchListBox.SelectedItem).id.ToString()), apikey);
 
+                // Get correct Id from participantIdentities
                 long CorrectSummoner = -1;
                 foreach (ParticipantIdentity ident in match.participantIdentities)
                 {
@@ -116,6 +116,7 @@ namespace LeagueApp
                         break;
                     }
                 }
+                // With the Id, find the right participant
                 List<Mastery> masteries = null;
                 foreach (Participant part in match.participants)
                 {
@@ -126,9 +127,10 @@ namespace LeagueApp
                     }
                 }
 
+                // Set rank labels in masteriesPanel control
                 foreach (Mastery m in masteries)
                 {
-                    var label = masteriesPanel.Controls.Find("l" + m.masteryId, true)[0];
+                    Control label = masteriesPanel.Controls.Find("l" + m.masteryId, true)[0];
                     label.Text = m.rank.ToString();
                 }
             }
@@ -141,16 +143,19 @@ namespace LeagueApp
 
         private void selectFunctionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Show only the panel of the option selected.  Hide all others
             foreach (Control c in this.Controls)
             {
                 if (c is Panel)
-                    c.Visible = false;
+                    if (c.Parent == this)
+                        c.Visible = false;
             }
             if ((string)selectFunctionComboBox.SelectedItem == "Mastery Page By Summoner Champion")
             {
                 masteryByChampion.Visible = true;
             }
         }
+
         private void Get_Mastery_Images()
         {
             var url = "http://ddragon.leagueoflegends.com/cdn/5.24.2/img/mastery/";
@@ -209,6 +214,7 @@ namespace LeagueApp
                 }
             }
         }
+
         private void initPictureBoxes()
         {
             foreach(KeyValuePair<string, MasteryDto> m in Masteries.data)

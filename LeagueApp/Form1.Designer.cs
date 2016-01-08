@@ -206,7 +206,6 @@
             this.summonerNameInput1.Size = new System.Drawing.Size(138, 20);
             this.summonerNameInput1.TabIndex = 3;
             this.summonerNameInput1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.summonerNameInput1_KeyDown);
-            this.summonerNameInput1.LostFocus += new System.EventHandler(this.summonerNameInput1_LostFocus);
             // 
             // summonerNameLabel1
             // 
