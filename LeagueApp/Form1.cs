@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using LeagueApi;
 using System.Threading;
+using System.Net;
+using System.IO;
 using static LeagueApi.LeagueApi;
 
 namespace LeagueApp
@@ -38,12 +40,16 @@ namespace LeagueApp
                 Masteries = Get_Masteries(apikey);
                 Runes = Get_Runes(apikey);
                 Items = Get_Items(apikey);
+                Get_Mastery_Images();
+                initPictureBoxes();
             }
             catch (Exception error)
             {
                 MessageBox.Show(error.Message, "Error initializing locals",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            var test = Masteries.data[Masteries.data.First().Key].image;
 
             selectFunctionComboBox.BeginUpdate();
             selectFunctionComboBox.Items.Add("Mastery Page By Summoner Champion");
@@ -120,19 +126,11 @@ namespace LeagueApp
                     }
                 }
 
-                masteryListBox.BeginUpdate();
-                masteryListBox.Items.Clear();
-                foreach(Mastery m in masteries)
+                foreach (Mastery m in masteries)
                 {
-                    if (m.masteryId < 6000)
-                        masteryListBox.Items.Add(m.masteryId.ToString() + "    " + m.rank);
-                    else
-                    {
-                        var mastery = Masteries.data[m.masteryId.ToString()].name;
-                        masteryListBox.Items.Add(mastery + "   " + m.rank);
-                    }
+                    var label = masteriesPanel.Controls.Find("l" + m.masteryId, true)[0];
+                    label.Text = m.rank.ToString();
                 }
-                masteryListBox.EndUpdate();
             }
             catch (Exception error)
             {
@@ -151,6 +149,77 @@ namespace LeagueApp
             if ((string)selectFunctionComboBox.SelectedItem == "Mastery Page By Summoner Champion")
             {
                 masteryByChampion.Visible = true;
+            }
+        }
+        private void Get_Mastery_Images()
+        {
+            var url = "http://ddragon.leagueoflegends.com/cdn/5.24.2/img/mastery/";
+            var directory = Directory.GetCurrentDirectory() + "\\masteries";
+            Version storedVersion;
+            Version currentVersion = new Version(Masteries.version);
+
+            // New installation runtime stuff; create directory for image files
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+            if (!File.Exists(directory + "\\VERSION.txt"))
+            {
+                // Create version file
+                using (var versionFile = File.OpenWrite(directory + "\\VERSION.txt"))
+                {
+                    using (var writer = new StreamWriter(versionFile))
+                    {
+                        writer.Write(Masteries.version);
+                    }
+                }
+                storedVersion = currentVersion;
+            }
+            // Get version number from version file
+            else
+            {
+                using (var versionFile = File.OpenRead(directory + "\\VERSION.txt"))
+                {
+                    using (var reader = new StreamReader(versionFile))
+                    {
+                        storedVersion = new Version(reader.ReadLine().Trim());
+                    }
+                }
+            }
+
+
+            // Download mastery image files
+            foreach (KeyValuePair<string, MasteryDto> mastery in Masteries.data)
+            {
+                string path = directory + "\\" + mastery.Value.id + ".png";
+                if (File.Exists(path) && 
+                    storedVersion >= currentVersion)
+                    continue;
+
+                var imgUrl = url + mastery.Value.id + ".png";
+                
+                try
+                {
+                    using (WebClient client = new WebClient())
+                    {
+                        client.DownloadFile(imgUrl, path);
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            }
+        }
+        private void initPictureBoxes()
+        {
+            foreach(KeyValuePair<string, MasteryDto> m in Masteries.data)
+            {
+                Image image = Image.FromFile(Directory.GetCurrentDirectory() +
+                     "\\masteries\\" + m.Value.id + ".png");
+                Control cur = masteriesPanel.Controls.Find("box" + m.Value.id.ToString(), true)[0];
+                ((PictureBox)cur).Image = image;
+                ((PictureBox)cur).Height = image.Height;
+                ((PictureBox)cur).Width = image.Width;
+                ((PictureBox)cur).BorderStyle = BorderStyle.FixedSingle;
             }
         }
     }
