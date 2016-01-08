@@ -18,6 +18,7 @@ namespace LeagueApp
     {
         private string apikey;
         private ChampionListDto Champions;
+        private ChampionListDto ChampionsInv;
         private MasteryListDto Masteries;
         private RuneListDto Runes;
         private ItemListDto Items;
@@ -33,6 +34,7 @@ namespace LeagueApp
             try
             {
                 Champions = Get_Champions(apikey);
+                ChampionsInv = Get_Champions(apikey, databyid: true);
                 Masteries = Get_Masteries(apikey);
                 Runes = Get_Runes(apikey);
                 Items = Get_Items(apikey);
@@ -44,7 +46,9 @@ namespace LeagueApp
             }
 
             selectFunctionComboBox.BeginUpdate();
+            selectFunctionComboBox.Items.Add("Mastery Page By Summoner Champion");
             selectFunctionComboBox.Items.Add("Mastery Page By Summoner");
+            selectFunctionComboBox.Items.Add("Rune Page By Summoner");
             selectFunctionComboBox.EndUpdate();
         }
 
@@ -65,11 +69,15 @@ namespace LeagueApp
             {
                 long summonerId = Get_Summoner_ID_By_Name(summonerNameInput1.Text, apikey);
                 List<MatchReference> matches = Get_Matches_From_Summoner_ID(summonerId, apikey);
-
+                
                 MatchListBox.BeginUpdate();
+                MatchListBox.Items.Clear();
+                MatchListBox.DisplayMember = "name";
+                MatchListBox.ValueMember = "id";
                 foreach (MatchReference match in matches)
                 {
-                    MatchListBox.Items.Add(match.matchId.ToString());
+                    var champ = ChampionsInv.data[match.champion.ToString()].name;
+                    MatchListBox.Items.Add(new MatchListBoxType(champ, match.matchId));
                 }
                 MatchListBox.EndUpdate();
                 
@@ -91,7 +99,7 @@ namespace LeagueApp
         {
             try
             {
-                var match = Get_Match_From_Match_ID(long.Parse(MatchListBox.SelectedItem.ToString()), apikey);
+                var match = Get_Match_From_Match_ID(long.Parse(((MatchListBoxType)MatchListBox.SelectedItem).id.ToString()), apikey);
 
                 long CorrectSummoner = -1;
                 foreach (ParticipantIdentity ident in match.participantIdentities)
@@ -116,7 +124,13 @@ namespace LeagueApp
                 masteryListBox.Items.Clear();
                 foreach(Mastery m in masteries)
                 {
-                    masteryListBox.Items.Add(m.masteryId.ToString() + "    " + m.rank);
+                    if (m.masteryId < 6000)
+                        masteryListBox.Items.Add(m.masteryId.ToString() + "    " + m.rank);
+                    else
+                    {
+                        var mastery = Masteries.data[m.masteryId.ToString()].name;
+                        masteryListBox.Items.Add(mastery + "   " + m.rank);
+                    }
                 }
                 masteryListBox.EndUpdate();
             }
@@ -129,15 +143,25 @@ namespace LeagueApp
 
         private void selectFunctionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (selectFunctionComboBox.SelectedText == "Mastery Page By Summoner")
+            foreach (Control c in this.Controls)
             {
-                masterySectionLabel.Visible = true;
-                summonerNameLabel1.Visible = true;
-                summonerNameInput1.Visible = true;
-                selectMatchLabel1.Visible = true;
-                MatchListBox.Visible = true;
-                getMasteriesButton1.Visible = true;
+                if (c is Panel)
+                    c.Visible = false;
             }
+            if ((string)selectFunctionComboBox.SelectedItem == "Mastery Page By Summoner Champion")
+            {
+                masteryByChampion.Visible = true;
+            }
+        }
+    }
+    class MatchListBoxType
+    {
+        public string name { get; set; }
+        public long id { get; set; }
+        public MatchListBoxType(string name, long id)
+        {
+            this.name = name;
+            this.id = id;
         }
     }
 }
