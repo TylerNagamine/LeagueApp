@@ -122,6 +122,11 @@
             this.box6114 = new System.Windows.Forms.PictureBox();
             this.l6111 = new System.Windows.Forms.Label();
             this.box6111 = new System.Windows.Forms.PictureBox();
+            this.summonerMasteriesPanel = new System.Windows.Forms.Panel();
+            this.masteryPageListBox = new System.Windows.Forms.ListBox();
+            this.selectMasteryPageLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.summonerNameInput2 = new System.Windows.Forms.TextBox();
             this.masteryByChampion.SuspendLayout();
             this.masteriesPanel.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -167,6 +172,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.box6121)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.box6114)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.box6111)).BeginInit();
+            this.summonerMasteriesPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // apikeyBox
@@ -1146,6 +1152,54 @@
             this.box6111.TabIndex = 26;
             this.box6111.TabStop = false;
             // 
+            // summonerMasteriesPanel
+            // 
+            this.summonerMasteriesPanel.Controls.Add(this.masteryPageListBox);
+            this.summonerMasteriesPanel.Controls.Add(this.selectMasteryPageLabel);
+            this.summonerMasteriesPanel.Controls.Add(this.label1);
+            this.summonerMasteriesPanel.Controls.Add(this.summonerNameInput2);
+            this.summonerMasteriesPanel.Location = new System.Drawing.Point(12, 79);
+            this.summonerMasteriesPanel.Name = "summonerMasteriesPanel";
+            this.summonerMasteriesPanel.Size = new System.Drawing.Size(919, 496);
+            this.summonerMasteriesPanel.TabIndex = 12;
+            this.summonerMasteriesPanel.Visible = false;
+            // 
+            // masteryPageListBox
+            // 
+            this.masteryPageListBox.FormattingEnabled = true;
+            this.masteryPageListBox.Location = new System.Drawing.Point(3, 89);
+            this.masteryPageListBox.Name = "masteryPageListBox";
+            this.masteryPageListBox.Size = new System.Drawing.Size(138, 134);
+            this.masteryPageListBox.TabIndex = 3;
+            this.masteryPageListBox.SelectedIndexChanged += new System.EventHandler(this.masteryPageListBox_SelectedIndexChanged);
+            // 
+            // selectMasteryPageLabel
+            // 
+            this.selectMasteryPageLabel.AutoSize = true;
+            this.selectMasteryPageLabel.Location = new System.Drawing.Point(3, 73);
+            this.selectMasteryPageLabel.Name = "selectMasteryPageLabel";
+            this.selectMasteryPageLabel.Size = new System.Drawing.Size(105, 13);
+            this.selectMasteryPageLabel.TabIndex = 2;
+            this.selectMasteryPageLabel.Text = "Select Mastery Page";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(3, 4);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(186, 17);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Mastery Page by Summoner";
+            // 
+            // summonerNameInput2
+            // 
+            this.summonerNameInput2.Location = new System.Drawing.Point(3, 40);
+            this.summonerNameInput2.Name = "summonerNameInput2";
+            this.summonerNameInput2.Size = new System.Drawing.Size(138, 20);
+            this.summonerNameInput2.TabIndex = 0;
+            this.summonerNameInput2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.summonerNameInput2_KeyDown);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1153,6 +1207,7 @@
             this.BackColor = System.Drawing.SystemColors.GrayText;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(943, 587);
+            this.Controls.Add(this.summonerMasteriesPanel);
             this.Controls.Add(this.masteryByChampion);
             this.Controls.Add(this.selectFunctionComboBox);
             this.Controls.Add(this.apiLabel);
@@ -1210,6 +1265,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.box6121)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.box6114)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.box6111)).EndInit();
+            this.summonerMasteriesPanel.ResumeLayout(false);
+            this.summonerMasteriesPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1311,6 +1368,11 @@
         private System.Windows.Forms.PictureBox box6114;
         private System.Windows.Forms.Label l6111;
         private System.Windows.Forms.PictureBox box6111;
+        private System.Windows.Forms.Panel summonerMasteriesPanel;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox summonerNameInput2;
+        private System.Windows.Forms.ListBox masteryPageListBox;
+        private System.Windows.Forms.Label selectMasteryPageLabel;
     }
 }
 

@@ -104,6 +104,7 @@ namespace LeagueApp
         {
             try
             {
+                resetMasteries();
                 var match = Get_Match_From_Match_ID(long.Parse(((MatchListBoxType)MatchListBox.SelectedItem).id.ToString()), apikey);
 
                 // Get correct Id from participantIdentities
@@ -141,6 +142,55 @@ namespace LeagueApp
             }
         }
 
+        private void summonerNameInput2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                try
+                {
+                    long smnId = Get_Summoner_ID_By_Name(summonerNameInput2.Text, apikey);
+                    Dictionary<string, MasteryPagesDto> test = Get_Summoner_Masteries(smnId, apikey);
+
+                    masteryPageListBox.BeginUpdate();
+                    masteryPageListBox.DisplayMember = "name";
+                    masteryPageListBox.ValueMember = "masteries";
+                    foreach (KeyValuePair<string, MasteryPagesDto> kv in test)
+                    {
+                        foreach (MasteryPageDto page in kv.Value.pages)
+                        {
+                            masteryPageListBox.Items.Add(new MasteryListBoxType(page.name, page.masteries));
+                        }
+                    }
+                    masteryPageListBox.EndUpdate();
+                }
+                catch (Exception error)
+                {
+                    MessageBox.Show(error.Message, "Mastery page error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void masteryPageListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                resetMasteries();
+                List<MasteryDto> cur = ((MasteryListBoxType)masteryPageListBox.SelectedItem).masteries;
+
+                foreach (MasteryDto page in cur)
+                {
+                    Control label = masteriesPanel.Controls.Find("l" + page.id, true)[0];
+                    label.Text = page.rank.ToString();
+                }
+            }
+            catch (Exception error)
+            {
+                MessageBox.Show(error.Message, "Error getting mastery information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void selectFunctionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Show only the panel of the option selected.  Hide all others
@@ -149,10 +199,22 @@ namespace LeagueApp
                 if (c is Panel)
                     if (c.Parent == this)
                         c.Visible = false;
+                //if (c is ListBox)
+                //    ((ListBox)c).Items.Clear();
             }
             if ((string)selectFunctionComboBox.SelectedItem == "Mastery Page By Summoner Champion")
             {
+                summonerNameLabel1.Parent = masteryByChampion;
+                masteryLabel.Parent = masteryByChampion;
+                masteriesPanel.Parent = masteryByChampion;
                 masteryByChampion.Visible = true;
+            }
+            if ((string)selectFunctionComboBox.SelectedItem == "Mastery Page By Summoner")
+            {
+                summonerNameLabel1.Parent = summonerMasteriesPanel;
+                masteryLabel.Parent = summonerMasteriesPanel;
+                masteriesPanel.Parent = summonerMasteriesPanel;
+                summonerMasteriesPanel.Visible = true;
             }
         }
 
@@ -228,6 +290,15 @@ namespace LeagueApp
                 ((PictureBox)cur).BorderStyle = BorderStyle.FixedSingle;
             }
         }
+
+        private void resetMasteries()
+        {
+            foreach (KeyValuePair<string, MasteryDto> kv in Masteries.data)
+            {
+                Control c = masteriesPanel.Controls.Find("l" + kv.Value.id, true)[0];
+                c.Text = "0";
+            }
+        }
     }
     class MatchListBoxType
     {
@@ -237,6 +308,16 @@ namespace LeagueApp
         {
             this.name = name;
             this.id = id;
+        }
+    }
+    class MasteryListBoxType
+    {
+        public string name { get; set; }
+        public List<MasteryDto> masteries { get; set; }
+        public MasteryListBoxType (string name, List<MasteryDto> masteries)
+        {
+            this.name = name;
+            this.masteries = masteries;
         }
     }
 }
