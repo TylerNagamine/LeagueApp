@@ -47,6 +47,8 @@ namespace LeagueApp
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
+            // Temp fix of placement errors
+
             // Add options to combobox
             selectFunctionComboBox.BeginUpdate();
             selectFunctionComboBox.Items.Add("Mastery Page By Summoner Champion");
@@ -142,6 +144,7 @@ namespace LeagueApp
             }
         }
 
+        // Summoner name input box for masteries by summoner name
         private void summonerNameInput2_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -152,6 +155,7 @@ namespace LeagueApp
                     Dictionary<string, MasteryPagesDto> test = Get_Summoner_Masteries(smnId, apikey);
 
                     masteryPageListBox.BeginUpdate();
+                    masteryPageListBox.Items.Clear();
                     masteryPageListBox.DisplayMember = "name";
                     masteryPageListBox.ValueMember = "masteries";
                     foreach (KeyValuePair<string, MasteryPagesDto> kv in test)
@@ -191,6 +195,65 @@ namespace LeagueApp
             }
         }
 
+        // Get runes by summoner name
+        private void summonerNameInput3_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                try
+                {
+                    long smnId = Get_Summoner_ID_By_Name(summonerNameInput3.Text, apikey);
+                    Dictionary<string, RunePagesDto> runes = Get_Summoner_Runes(smnId, apikey);
+
+                    runeBox.BeginUpdate();
+                    runeBox.DisplayMember = "name";
+                    runeBox.ValueMember = "runes";
+                    foreach (RunePageDto page in runes.First().Value.pages)
+                    {
+                        runeBox.Items.Add(new RuneListBoxType(page.name, page.slots));
+                    }
+                    runeBox.EndUpdate();
+                }
+                catch (Exception error)
+                {
+                    MessageBox.Show(error.Message, "Rune page error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void runeBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                HashSet<RuneSlotDto> runes = ((RuneListBoxType)runeBox.SelectedItem).runes;
+                Dictionary<long, int> rank = new Dictionary<long, int>();
+
+                foreach (RuneSlotDto rs in runes)
+                {
+                    if (rank.Keys.Contains(rs.runeId))
+                        rank[rs.runeId]++;
+                    else
+                        rank.Add(rs.runeId, 1);
+                }
+
+                runePageListBox.BeginUpdate();
+                runePageListBox.Items.Clear();
+                foreach (KeyValuePair<long, int> kv in rank)
+                {
+                    var test = Runes.data[kv.Key.ToString()];
+                    runePageListBox.Items.Add(kv.Value + "x " + test.name);
+                }
+                runePageListBox.EndUpdate();
+            }
+            catch (Exception error)
+            {
+                MessageBox.Show(error.Message, "Error getting rune information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // Select the desired function
         private void selectFunctionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Show only the panel of the option selected.  Hide all others
@@ -209,15 +272,21 @@ namespace LeagueApp
                 masteriesPanel.Parent = masteryByChampion;
                 masteryByChampion.Visible = true;
             }
-            if ((string)selectFunctionComboBox.SelectedItem == "Mastery Page By Summoner")
+            else if ((string)selectFunctionComboBox.SelectedItem == "Mastery Page By Summoner")
             {
                 summonerNameLabel1.Parent = summonerMasteriesPanel;
                 masteryLabel.Parent = summonerMasteriesPanel;
                 masteriesPanel.Parent = summonerMasteriesPanel;
                 summonerMasteriesPanel.Visible = true;
             }
+            else if ((string)selectFunctionComboBox.SelectedItem == "Rune Page By Summoner")
+            {
+                summonerNameLabel1.Parent = summonerRunesPanel;
+                summonerRunesPanel.Visible = true;
+            }
         }
 
+        // Retrieve mastery images from ddragon, save locally
         private void Get_Mastery_Images()
         {
             var url = "http://ddragon.leagueoflegends.com/cdn/5.24.2/img/mastery/";
@@ -310,6 +379,7 @@ namespace LeagueApp
             this.id = id;
         }
     }
+
     class MasteryListBoxType
     {
         public string name { get; set; }
@@ -318,6 +388,17 @@ namespace LeagueApp
         {
             this.name = name;
             this.masteries = masteries;
+        }
+    }
+
+    class RuneListBoxType
+    {
+        public string name { get; set; }
+        public HashSet<RuneSlotDto> runes { get; set; }
+        public RuneListBoxType(string name, HashSet<RuneSlotDto> runes)
+        {
+            this.name = name;
+            this.runes = runes;
         }
     }
 }
