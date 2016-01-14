@@ -1,12 +1,12 @@
-﻿using System;
+﻿using LeagueApi;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using System.Diagnostics;
-using LeagueApi;
-using System.Net;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Windows.Forms;
 using static LeagueApi.LeagueApi;
 
 namespace LeagueApp
@@ -36,6 +36,8 @@ namespace LeagueApp
                 Masteries = Get_Masteries(apikey);
                 Runes = Get_Runes(apikey);
                 Items = Get_Items(apikey);
+                List<string> ver = Get_Version(apikey);
+                verLabel.Text = ver.First();
 
                 // Get images/initalize image boxes
                 Get_Mastery_Images();
@@ -43,8 +45,7 @@ namespace LeagueApp
             }
             catch (Exception error)
             {
-                MessageBox.Show(error.Message, "Error initializing locals",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Show_Error(error.Message);
             }
 
             // Temp fix of placement errors
@@ -60,11 +61,13 @@ namespace LeagueApp
         // Set apikey locally when box text is changed
         private void apikeyBox_TextChanged(object sender, EventArgs e)
         {
+            errorLabel.Hide();
             apikey = apikeyBox.Text;
         }
  
         private void apiLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            errorLabel.Hide();
             // Send user to Api Key website
             ProcessStartInfo sInfo = new ProcessStartInfo("https://developer.riotgames.com/");
             Process.Start(sInfo);
@@ -72,9 +75,28 @@ namespace LeagueApp
 
         // Upon completing entering the desired summoner name,
         // run the functions
+        private string smnInput1TextDelta = "";
+        private void summonerNameInput1_TextChanged(object sender, EventArgs e)
+        {
+            if (summonerNameInput1.Text != smnInput1TextDelta &&
+                smnInput1TextDelta != "")
+            {
+                smnInput1TextDelta = "";
+
+                errorLabel.Hide();
+                MatchListBox.BeginUpdate();
+                MatchListBox.Items.Clear();
+                MatchListBox.EndUpdate();
+                resetMasteries();
+            }
+        }
+
         private void summonerNameInput1_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            errorLabel.Hide();
+            smnInput1TextDelta = summonerNameInput1.Text;
+
+            if (e.KeyCode == Keys.Enter)
             {
                 try
                 {
@@ -96,18 +118,18 @@ namespace LeagueApp
                 }
                 catch (Exception error)
                 {
-                    MessageBox.Show(error.Message, "Summoner name error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Show_Error(error.Message);
                 }
             }
         }
 
         private void MatchListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            errorLabel.Hide();
             try
             {
                 resetMasteries();
-                var match = Get_Match_From_Match_ID(long.Parse(((MatchListBoxType)MatchListBox.SelectedItem).id.ToString()), apikey);
+                var match = Get_Match_From_Match_ID(((MatchListBoxType)MatchListBox.SelectedItem).id, apikey);
 
                 // Get correct Id from participantIdentities
                 long CorrectSummoner = -1;
@@ -137,16 +159,32 @@ namespace LeagueApp
                     label.Text = m.rank.ToString();
                 }
             }
-            catch (Exception error)
+            catch
             {
-                MessageBox.Show(error.Message, "Error getting match information",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Show_Error("Mastery information is from an older, unsupported verison of League");
             }
         }
 
         // Summoner name input box for masteries by summoner name
+        private string smnInput2TextDelta = "";
+        private void summonerNameInput2_TextChanged(object sender, EventArgs e)
+        {
+            if (summonerNameInput2.Text != smnInput2TextDelta &&
+                smnInput2TextDelta != "")
+            {
+                smnInput2TextDelta = "";
+
+                masteryPageListBox.BeginUpdate();
+                masteryPageListBox.Items.Clear();
+                masteryPageListBox.EndUpdate();
+                resetMasteries();
+            }
+        }
+
         private void summonerNameInput2_KeyDown(object sender, KeyEventArgs e)
         {
+            errorLabel.Hide();
+            smnInput2TextDelta = summonerNameInput2.Text;
             if (e.KeyCode == Keys.Enter)
             {
                 try
@@ -169,14 +207,14 @@ namespace LeagueApp
                 }
                 catch (Exception error)
                 {
-                    MessageBox.Show(error.Message, "Mastery page error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Show_Error(error.Message);
                 }
             }
         }
 
         private void masteryPageListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            errorLabel.Hide();
             try
             {
                 resetMasteries();
@@ -190,14 +228,33 @@ namespace LeagueApp
             }
             catch (Exception error)
             {
-                MessageBox.Show(error.Message, "Error getting mastery information",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Show_Error(error.Message);
             }
         }
 
         // Get runes by summoner name
+        private string smnInput3TextDelta = "";
+        private void summonerNameInput3_TextChanged(object sender, EventArgs e)
+        {
+            if (summonerNameInput3.Text != smnInput3TextDelta &&
+                smnInput3TextDelta != "")
+            {
+                smnInput3TextDelta = "";
+
+                runeBox.BeginUpdate();
+                runeBox.Items.Clear();
+                runeBox.EndUpdate();
+                runePageListBox.BeginUpdate();
+                runePageListBox.Items.Clear();
+                runePageListBox.EndUpdate();
+            }
+        }
+
         private void summonerNameInput3_KeyDown(object sender, KeyEventArgs e)
         {
+            errorLabel.Hide();
+            smnInput3TextDelta = summonerNameInput3.Text;
+
             if (e.KeyCode == Keys.Enter)
             {
                 try
@@ -216,14 +273,14 @@ namespace LeagueApp
                 }
                 catch (Exception error)
                 {
-                    MessageBox.Show(error.Message, "Rune page error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Show_Error(error.Message);
                 }
             }
         }
 
         private void runeBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            errorLabel.Hide();
             try
             {
                 HashSet<RuneSlotDto> runes = ((RuneListBoxType)runeBox.SelectedItem).runes;
@@ -248,14 +305,16 @@ namespace LeagueApp
             }
             catch (Exception error)
             {
-                MessageBox.Show(error.Message, "Error getting rune information",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Show_Error(error.Message);
             }
         }
 
         // Select the desired function
         private void selectFunctionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            errorLabel.Text = "";
+            errorLabel.Hide();
+
             // Show only the panel of the option selected.  Hide all others
             foreach (Control c in this.Controls)
             {
@@ -341,7 +400,7 @@ namespace LeagueApp
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    Show_Error(e.Message);
                 }
             }
         }
@@ -368,7 +427,14 @@ namespace LeagueApp
                 c.Text = "0";
             }
         }
+
+        private void Show_Error(string error)
+        {
+            errorLabel.Text = error;
+            errorLabel.Show();
+        }
     }
+
     class MatchListBoxType
     {
         public string name { get; set; }

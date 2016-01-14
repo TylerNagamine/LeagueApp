@@ -133,6 +133,8 @@
             this.summonerNameInput3 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.runePageListBox = new System.Windows.Forms.ListBox();
+            this.verLabel = new System.Windows.Forms.Label();
+            this.errorLabel = new System.Windows.Forms.Label();
             this.masteryByChampion.SuspendLayout();
             this.masteriesPanel.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -194,6 +196,7 @@
             // apiLabel
             // 
             this.apiLabel.AutoSize = true;
+            this.apiLabel.LinkColor = System.Drawing.Color.Black;
             this.apiLabel.Location = new System.Drawing.Point(12, 6);
             this.apiLabel.Name = "apiLabel";
             this.apiLabel.Size = new System.Drawing.Size(45, 13);
@@ -219,6 +222,7 @@
             this.summonerNameInput1.Size = new System.Drawing.Size(138, 20);
             this.summonerNameInput1.TabIndex = 3;
             this.summonerNameInput1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.summonerNameInput1_KeyDown);
+            this.summonerNameInput1.TextChanged += new System.EventHandler(this.summonerNameInput1_TextChanged);
             // 
             // summonerNameLabel1
             // 
@@ -1165,9 +1169,9 @@
             this.summonerMasteriesPanel.Controls.Add(this.selectMasteryPageLabel);
             this.summonerMasteriesPanel.Controls.Add(this.label1);
             this.summonerMasteriesPanel.Controls.Add(this.summonerNameInput2);
-            this.summonerMasteriesPanel.Location = new System.Drawing.Point(12, 79);
+            this.summonerMasteriesPanel.Location = new System.Drawing.Point(159, 79);
             this.summonerMasteriesPanel.Name = "summonerMasteriesPanel";
-            this.summonerMasteriesPanel.Size = new System.Drawing.Size(919, 496);
+            this.summonerMasteriesPanel.Size = new System.Drawing.Size(772, 496);
             this.summonerMasteriesPanel.TabIndex = 12;
             this.summonerMasteriesPanel.Visible = false;
             // 
@@ -1205,6 +1209,7 @@
             this.summonerNameInput2.Name = "summonerNameInput2";
             this.summonerNameInput2.Size = new System.Drawing.Size(138, 20);
             this.summonerNameInput2.TabIndex = 0;
+            this.summonerNameInput2.TextChanged += new System.EventHandler(this.summonerNameInput2_TextChanged);
             this.summonerNameInput2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.summonerNameInput2_KeyDown);
             // 
             // summonerRunesPanel
@@ -1214,9 +1219,9 @@
             this.summonerRunesPanel.Controls.Add(this.runeBox);
             this.summonerRunesPanel.Controls.Add(this.summonerNameInput3);
             this.summonerRunesPanel.Controls.Add(this.label2);
-            this.summonerRunesPanel.Location = new System.Drawing.Point(12, 79);
+            this.summonerRunesPanel.Location = new System.Drawing.Point(216, 79);
             this.summonerRunesPanel.Name = "summonerRunesPanel";
-            this.summonerRunesPanel.Size = new System.Drawing.Size(919, 496);
+            this.summonerRunesPanel.Size = new System.Drawing.Size(715, 496);
             this.summonerRunesPanel.TabIndex = 4;
             this.summonerRunesPanel.Visible = false;
             // 
@@ -1244,6 +1249,7 @@
             this.summonerNameInput3.Name = "summonerNameInput3";
             this.summonerNameInput3.Size = new System.Drawing.Size(138, 20);
             this.summonerNameInput3.TabIndex = 3;
+            this.summonerNameInput3.TextChanged += new System.EventHandler(this.summonerNameInput3_TextChanged);
             this.summonerNameInput3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.summonerNameInput3_KeyDown);
             // 
             // label2
@@ -1264,13 +1270,40 @@
             this.runePageListBox.Size = new System.Drawing.Size(264, 186);
             this.runePageListBox.TabIndex = 6;
             // 
+            // verLabel
+            // 
+            this.verLabel.AutoSize = true;
+            this.verLabel.Location = new System.Drawing.Point(903, 6);
+            this.verLabel.Name = "verLabel";
+            this.verLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.verLabel.Size = new System.Drawing.Size(33, 13);
+            this.verLabel.TabIndex = 13;
+            this.verLabel.Text = "x.xx.x";
+            this.verLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // errorLabel
+            // 
+            this.errorLabel.AutoSize = true;
+            this.errorLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.errorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.errorLabel.ForeColor = System.Drawing.Color.Red;
+            this.errorLabel.Location = new System.Drawing.Point(250, 42);
+            this.errorLabel.Name = "errorLabel";
+            this.errorLabel.Size = new System.Drawing.Size(51, 22);
+            this.errorLabel.TabIndex = 14;
+            this.errorLabel.Text = "Error";
+            this.errorLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.errorLabel.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.GrayText;
+            this.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(943, 587);
+            this.Controls.Add(this.errorLabel);
+            this.Controls.Add(this.verLabel);
             this.Controls.Add(this.summonerRunesPanel);
             this.Controls.Add(this.summonerMasteriesPanel);
             this.Controls.Add(this.masteryByChampion);
@@ -1446,6 +1479,8 @@
         private System.Windows.Forms.Label runeBoxLabel;
         private System.Windows.Forms.ListBox runeBox;
         private System.Windows.Forms.ListBox runePageListBox;
+        private System.Windows.Forms.Label verLabel;
+        private System.Windows.Forms.Label errorLabel;
     }
 }
 
