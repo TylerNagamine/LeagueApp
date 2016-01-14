@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.apikeyBox = new System.Windows.Forms.TextBox();
             this.apiLabel = new System.Windows.Forms.LinkLabel();
             this.masterySectionLabel = new System.Windows.Forms.Label();
@@ -128,13 +129,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.summonerNameInput2 = new System.Windows.Forms.TextBox();
             this.summonerRunesPanel = new System.Windows.Forms.Panel();
+            this.runePageListBox = new System.Windows.Forms.ListBox();
             this.runeBoxLabel = new System.Windows.Forms.Label();
             this.runeBox = new System.Windows.Forms.ListBox();
             this.summonerNameInput3 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.runePageListBox = new System.Windows.Forms.ListBox();
             this.verLabel = new System.Windows.Forms.Label();
             this.errorLabel = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.masteryByChampion.SuspendLayout();
             this.masteriesPanel.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -221,8 +223,8 @@
             this.summonerNameInput1.Name = "summonerNameInput1";
             this.summonerNameInput1.Size = new System.Drawing.Size(138, 20);
             this.summonerNameInput1.TabIndex = 3;
-            this.summonerNameInput1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.summonerNameInput1_KeyDown);
             this.summonerNameInput1.TextChanged += new System.EventHandler(this.summonerNameInput1_TextChanged);
+            this.summonerNameInput1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.summonerNameInput1_KeyDown);
             // 
             // summonerNameLabel1
             // 
@@ -1169,9 +1171,9 @@
             this.summonerMasteriesPanel.Controls.Add(this.selectMasteryPageLabel);
             this.summonerMasteriesPanel.Controls.Add(this.label1);
             this.summonerMasteriesPanel.Controls.Add(this.summonerNameInput2);
-            this.summonerMasteriesPanel.Location = new System.Drawing.Point(159, 79);
+            this.summonerMasteriesPanel.Location = new System.Drawing.Point(12, 79);
             this.summonerMasteriesPanel.Name = "summonerMasteriesPanel";
-            this.summonerMasteriesPanel.Size = new System.Drawing.Size(772, 496);
+            this.summonerMasteriesPanel.Size = new System.Drawing.Size(919, 496);
             this.summonerMasteriesPanel.TabIndex = 12;
             this.summonerMasteriesPanel.Visible = false;
             // 
@@ -1219,11 +1221,19 @@
             this.summonerRunesPanel.Controls.Add(this.runeBox);
             this.summonerRunesPanel.Controls.Add(this.summonerNameInput3);
             this.summonerRunesPanel.Controls.Add(this.label2);
-            this.summonerRunesPanel.Location = new System.Drawing.Point(216, 79);
+            this.summonerRunesPanel.Location = new System.Drawing.Point(12, 79);
             this.summonerRunesPanel.Name = "summonerRunesPanel";
-            this.summonerRunesPanel.Size = new System.Drawing.Size(715, 496);
+            this.summonerRunesPanel.Size = new System.Drawing.Size(919, 496);
             this.summonerRunesPanel.TabIndex = 4;
             this.summonerRunesPanel.Visible = false;
+            // 
+            // runePageListBox
+            // 
+            this.runePageListBox.FormattingEnabled = true;
+            this.runePageListBox.Location = new System.Drawing.Point(183, 40);
+            this.runePageListBox.Name = "runePageListBox";
+            this.runePageListBox.Size = new System.Drawing.Size(264, 186);
+            this.runePageListBox.TabIndex = 6;
             // 
             // runeBoxLabel
             // 
@@ -1262,14 +1272,6 @@
             this.label2.TabIndex = 2;
             this.label2.Text = "Rune Page by Summoner";
             // 
-            // runePageListBox
-            // 
-            this.runePageListBox.FormattingEnabled = true;
-            this.runePageListBox.Location = new System.Drawing.Point(183, 40);
-            this.runePageListBox.Name = "runePageListBox";
-            this.runePageListBox.Size = new System.Drawing.Size(264, 186);
-            this.runePageListBox.TabIndex = 6;
-            // 
             // verLabel
             // 
             this.verLabel.AutoSize = true;
@@ -1294,6 +1296,12 @@
             this.errorLabel.Text = "Error";
             this.errorLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.errorLabel.Visible = false;
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutoPopDelay = 5000;
+            this.toolTip1.InitialDelay = 1;
+            this.toolTip1.ReshowDelay = 0;
             // 
             // Form1
             // 
@@ -1481,6 +1489,7 @@
         private System.Windows.Forms.ListBox runePageListBox;
         private System.Windows.Forms.Label verLabel;
         private System.Windows.Forms.Label errorLabel;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 

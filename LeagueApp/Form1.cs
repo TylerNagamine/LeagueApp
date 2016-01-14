@@ -28,6 +28,7 @@ namespace LeagueApp
         private void Form1_Load(object sender, EventArgs e)
         {
             apikey = apikeyBox.Text;
+
             try
             {
                 // Get static data
@@ -157,6 +158,11 @@ namespace LeagueApp
                 {
                     Control label = masteriesPanel.Controls.Find("l" + m.masteryId, true)[0];
                     label.Text = m.rank.ToString();
+
+                    Control box = masteriesPanel.Controls.Find("box" + m.masteryId, true)[0];
+
+                    MasteryDto mst = Masteries.data[m.masteryId.ToString()];
+                    toolTip1.SetToolTip(box, mst.name + "\n\n" + mst.description[m.rank-1]);
                 }
             }
             catch
@@ -416,6 +422,9 @@ namespace LeagueApp
                 ((PictureBox)cur).Height = image.Height;
                 ((PictureBox)cur).Width = image.Width;
                 ((PictureBox)cur).BorderStyle = BorderStyle.FixedSingle;
+
+                toolTip1.SetToolTip(cur, m.Value.name + "\n\n" + 
+                    m.Value.description.First().Replace("<br>", "\n"));
             }
         }
 
@@ -425,6 +434,9 @@ namespace LeagueApp
             {
                 Control c = masteriesPanel.Controls.Find("l" + kv.Value.id, true)[0];
                 c.Text = "0";
+
+                toolTip1.SetToolTip(c, kv.Value.name + "\n\n" +
+                    kv.Value.description.First().Replace("<br>", "\n"));
             }
         }
 
